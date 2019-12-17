@@ -1,0 +1,350 @@
+{% extends "administrateur/admintemplate.html.twig" %}
+{% block notif %}  {% if CountNonTraite %}
+    <strong style="color: red">
+        {% for item in CountNonTraite %}{{ item.notraitee }}{% endfor %}
+    </strong>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if dataerrors %}
+    <div class="alert alert-danger">
+        <strong>{{ dataerrors }}</strong>
+    </div>
+        {% endif %}
+    <div class="container">
+        <div class="row">
+
+            <i class="fa fa-plus-square btn col-lg-1 float-left" style="font-size:24px;color:green; padding: 0px;" data-toggle="modal" data-target="#PRoduitShow"></i>
+
+
+
+    <div class="col-lg-3">
+        sorty by :
+        <button class="btns btn success">{{ knp_pagination_sortable(items, 'Prix', 'prix', {'defaultDirection' : 'desc'}) }}</button>
+        <button class="btns btn info"> {{ knp_pagination_sortable(items, 'Cat', 'Category', {'defaultDirection' : 'desc'}) }}</button>
+
+    </div>
+            <div class="form-inline col-lg-3 ">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input id="myInput" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
+                       aria-label="Search">
+            </div>
+
+            {#{{ knp_pagination_render(items) }}#}
+            <nav aria-label="..." class="float-right col-lg-5" >
+                <ul class="pagination float-right">
+                    {{ knp_pagination_render(items) }}
+
+                </ul>
+            </nav>
+
+    </div>
+    </div>
+    <div class="col-lg-12 mb-12">
+        <div class="card">
+
+            <div class="card-header">
+                <h6 class="text-uppercase mb-0">List Produits</h6>
+            </div>
+
+
+
+            <div class="card-body">
+                <table class="table card-text">
+
+                    <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Nom de Produit</th>
+                        <th>Code Produit</th>
+                        <th>Prix</th>
+                        <th>Categories</th>
+                        <th>Etat</th>
+                        <th>Image</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable">
+                    {% for item in items %}
+                        <tr>
+
+                            <th scope="row">{{ item.id }}</th>
+
+                            <td>{{ item.Description }}</td>
+                            <td>{{ item.ProduitCode }}</td>
+                            <td>{{ item.prix }}</td>
+                            <td>{{ item.Category.NameCategorie }}</td>
+                            <td>
+                                {%  if item.HOLD !=1 %}
+                                    Ouvert
+                                {% else %}
+                                    fermé
+                                {%  endif %}
+
+                            </td>
+                            <td>
+                                <img class="img-fluid " src="{{ asset('uploads/Image/' ~ item.ImageUrl) }}" alt="" width="120" height="120">
+
+                            </td>
+                            <td>
+                                <i class="btn fas fa-edit" style="color:blue;font-size:16px"     data-toggle="modal" data-nameproductvar="{{item.Description}}" data-varid="{{item.id}}"
+                               data-description="{{ item.DescriptionText }}"   data-prix="{{ item.prix }}"    data-varproductcode="{{ item.ProduitCode }}" data-idid="{{item.id}}"  data-idhold="{{item.HOLD}}" data-target="#exampleModal"  ></i>
+                                <a class="btn fas fa-images" style="color:red;font-size:16px" href="{{ path('admin_produit_updateImage',{'id':item.id}) }}"> </a>
+                            </td>
+
+
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade bd-example-modal-lg" id="PRoduitShow" tabindex="-1" role="dialog" aria-labelledby="PRoduitShow" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(form)}}
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">{{ form_row(form.Description) }}</div>
+                        <div class="col-md-6">{{ form_row(form.Produit_Code) }}</div>
+                        <div class="col-md-12">{{ form_row(form.DescriptionText) }}</div>
+                        <div class="col-md-3">{{ form_row(form.prix) }} </div>
+                        <div class="col-md-9"> {{ form_row(form.Category) }}</div>
+                        <div class="col-md-12"> {{ form_row(form.ImageUrl) }}</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    {{ form_row(form.Save) }}
+                    {{ form_errors(form) }}
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    {#{{-- Edit MODEL--}}#}
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Modifier Catégorie</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="{{path('admin_produit_update')}}"  method="post" role="form" enctype="multipart/form-data">
+
+                    <div class="modal-body row">
+                        <input type="hidden" name="idid" id="idid" value="">
+
+
+                        <div class="form-group col-md-2">
+                            <label for="recipient-name" class="control-label">Id: </label>
+                            <input type="text" class="form-control" id="IDEdit" name="idedit" aria-disabled="" disabled>
+                        </div>
+
+                        <div class="form-group col-md-10">
+                            <label for="recipient-name" class="control-label">Code Produit</label>
+                            <input type="text" class="form-control" id="NameProductCodeEdit" aria-disabled="" disabled name="editproductcode" aria-disabled="">
+                        </div>
+
+                        <div class="form-group col-md-10">
+                            <label for="recipient-name" class="control-label">Titre</label>
+                            <input type="text" class="form-control" id="NameDescriptionEdit" name="editnameproduit" aria-disabled="">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="recipient-name" class="control-label">Déscription</label>
+                            <textarea class="form-control" id="description" name="description"> </textarea>
+                        </div>
+
+
+
+                        <div class="form-group col-md-9" >
+                            <label for="recipient-name" class="control-label">Categorie</label>
+                            <div class="">
+                                <select class="form-control form-control-sm"  id=categorieEdit name="categories" required>
+                                    <option value="" selected data-default>Select une Categorie</option>
+
+                                    {% if  categories %}
+                                    {% for key in categories %}
+                                    <option id="categorieEdit" value="{{key.id}}">{{key.NameCategorie}} </option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group col-md-3">
+                            <label for="recipient-name" class="control-label">Prix</label>
+                            <input type="text" class="form-control" id="PrixEdit" name="PrixNameEdit" aria-disabled="">
+                        </div>
+
+                        <label  cfor="recipient-name" class="control-label col-md-3">Bloqué</label>
+                        <div  class="form-check col-md-3">
+
+                            <input type="checkbox" class="form-check-input" id="HOLD" name="HOLD[]">
+                        </div>
+                        <br>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% if not form.vars.valid %}
+        <div class="alert alert-error">
+
+        </div>
+    {% endif %}
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var varableNameProduct = button.data('nameproductvar')
+            var varabledescription = button.data('description')
+            var varabblecodeproduit= button.data('varproductcode')
+            var varabeId = button.data('varid')
+            var prix=button.data('prix')
+            var categories = button.data('varid')
+            var HOLD = button.data('idhold')
+            var modal = $(this)
+            modal.find('.modal-body #PrixEdit').val(prix)
+            modal.find('.modal-body #NameProductCodeEdit').val(varabblecodeproduit)
+            modal.find('.modal-body #NameDescriptionEdit').val(varableNameProduct)
+            modal.find('.modal-body #description').val(varabledescription)
+            modal.find('.modal-body #IDEdit').val(varabeId)
+            modal.find('.modal-body #idid').val(varabeId)
+            if (HOLD==1){
+
+                modal.find('.modal-body #HOLD').prop("checked", true)
+            }
+            else {
+                modal.find('.modal-body #HOLD').prop("checked", false)
+            }
+        })
+
+       </script>
+    <script>
+        $('#input_produit_ImageUrl').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+
+
+    <style>
+        .btns {
+            border: 2px solid black;
+            background-color: white;
+            color: black;
+            padding: 7px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Green */
+        .success {
+            border-color: #4CAF50;
+            color: green;
+        }
+
+        .success:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Blue */
+        .info {
+            border-color: #2196F3;
+            color: dodgerblue
+        }
+
+        .info:hover {
+            background: #2196F3;
+            color: white;
+        }
+
+        /* Orange */
+        .warning {
+            border-color: #ff9800;
+            color: orange;
+        }
+
+        .warning:hover {
+            background: #ff9800;
+            color: white;
+        }
+
+        /* Red */
+        .danger {
+            border-color: #f44336;
+            color: red
+        }
+
+        .danger:hover {
+            background: #f44336;
+            color: white;
+        }
+
+        /* Gray */
+        .default {
+            border-color: #e7e7e7;
+            color: black;
+        }
+
+        .default:hover {
+            background: #e7e7e7;
+        }
+    </style>
+
+
+
+
+    {#search#}
+    <script>
+        $(document).ready(function(){
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+{% endblock %}

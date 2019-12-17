@@ -1,0 +1,23 @@
+{% extends "administrateur/admintemplate.html.twig" %}
+{% block body %}
+    <div class="col-lg-9 mb-9">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h6 text-uppercase mb-0">Upload Image</h3>
+            </div>
+            <div class="card-body">
+                <p></p>
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        $('#update_image_p_roduit_in_admin_ImageUrl').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+{% endblock %}

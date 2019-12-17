@@ -1,0 +1,115 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+    <div class="single-product-area section-padding-100 clearfix">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mt-50">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Produit</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+    {% for item in items %}
+            <div class="row" id="container">
+                <div class="col-lg-6">
+                    <div class="single_product_thumb">
+                            <img src="{{ asset('uploads/Image/' ~ item.ImageUrl) }}" width="420" height="520" >
+                        </div>
+                    </div>
+
+                <div class="col-lg-5">
+                    <div class="single_product_desc">
+                        <!-- Product Meta Data -->
+                        <div class="product-meta-data">
+                            <div class="line"></div>
+                            <p class="product-price">€{{ item.prix }}</p>
+                            <a href="product-details.html">
+                                <h6>{{ item.Description }}</h6>
+                            </a>
+                            <!-- Ratings & Review -->
+                            <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
+                                <div class="ratings">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                </div>
+                                <div class="review">
+                                    <a href="#">Write A Review</a>
+                                </div>
+                            </div>
+                            <!-- Avaiable -->
+                            {% if item.stockProduit.Qty >0 %}
+                            <p class="avaibility"><i class="fa fa-circle" style=" font-size: 16px; color: #33CC33;"></i> In Stock</p>
+                                {% else %}
+                                    <p class="avaibility"><i class="fa fa-circle avaible" style="font-size: 16px; color: #FF3300;"></i> Not Avaiable Stock</p>
+                                {% endif %}
+                        </div>
+
+                        <div class="short_overview my-5">
+                            <p>{{ item.DescriptionText }}</p>
+                        </div>
+
+                        <!-- Add to Cart Form -->
+                        <form class="cart clearfix" method="post">
+                            {#<div class="cart-btn d-flex mb-50">#}
+                                {#<p>Qty</p>#}
+                                {#<div class="quantity">#}
+                                    {#<span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty > 1 ) effect.value--;return false;"><i class="fa fa-caret-down" aria-hidden="true"></i></span>#}
+                                    {#<input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">#}
+                                    {#<span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-caret-up" aria-hidden="true"></i></span>#}
+                                 {#</div>#}
+                            {#</div>#}
+                            {% if item.stockProduit.Qty >0 %}
+                            <a href="{{ path('cart_add',{'id':item.id}) }}" name="addtocart" value="5" class="btn amado-btn">Ajouter au panier</a>
+                                {% endif %}
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+        {% endfor %}
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        $(function(){
+
+            var $container = $('#container');
+
+            $container.isotope({
+                itemSelector: '.item',
+                getSortData: {
+                    price: function( $item ) {
+                        // remove possible dollar sign
+                        var text = $item.text().replace( '$', '' );
+                        // convert to number
+                        return parseFloat( text );
+                    },
+                    // for rainbows
+                    color: function( $item ) {
+                        return $item.css('backgroundColor');
+                    }
+                }
+            });
+
+            $('[data-isotope-option]').click( function( event ) {
+                event.preventDefault();
+                var option = $(this).attr('data-isotope-option');
+                // convert string to object
+                option = JSON.parse( option );
+                $container.isotope( option );
+            });
+
+        });
+
+    </script>
+{% endblock %}

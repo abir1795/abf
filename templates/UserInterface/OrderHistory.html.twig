@@ -1,0 +1,78 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+
+<div class="col-lg-8">
+    <h2 style="margin-top: 120px">Order History</h2>
+    <div class="container">
+        <div class="row">
+            <div class="form-inline col-lg-5">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input id="myInput" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
+                       aria-label="Search">
+            </div>
+            {#{{ knp_pagination_render(items) }}#}
+            <nav aria-label="..." class="float-right col-lg-7" >
+                <ul class="pagination float-right">
+                    {{ knp_pagination_render(items) }}
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="card-block bg-white table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Date Order</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>More Details</th>
+            </tr>
+            </thead>
+            <tbody id="myTable">
+            {% for item in items %}
+            <tr>
+
+                <td>
+                    {{ item.id }}
+                </td>
+                <td>{{ item.date_create}}</td>
+                <td>{{ app.user.Nom }} {{ app.user.Prenom }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.commande_total }}</td>
+
+                <td>
+                    {% if  item.status =='Annuler'  %}<span class="badge badge-danger font-weight-150">Is Canceled</span>{% endif %}
+                    {% if  item.status =='Traitée'  %}<span class="badge badge-success font-weight-160">Is validated</span>{% endif %}
+                    {% if  item.status =='Non Traite' %}<span class="badge badge-warning font-weight-150">Being processed</span>{% endif %}
+                </td>
+                <td> <a href="{{ path('app_getajax_orderhistory',{'id':item.id}) }}" class="btn btn-primary fa fa-eye">
+
+                    </a></td>
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+    <script src="{{ asset('js/app.js') }}"></script>
+
+    {#search#}
+    <script>
+        $(document).ready(function(){
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

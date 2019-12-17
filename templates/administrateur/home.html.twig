@@ -1,0 +1,101 @@
+{% extends "administrateur/admintemplate.html.twig" %}
+{% block notif %}  {% if CountNonTraite %}
+    <strong style="color: red">
+        {% for item in CountNonTraite %}{{ item.notraitee }}{% endfor %}
+    </strong>
+    {% endif %}
+{% endblock %}
+{% block body %}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="{{ asset('css/admin/card.css') }}"rel="stylesheet">
+    <!------ Include the above in your HEAD tag ---------->
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card-counter primary">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="count-numbers">{% for item in TotalCommande %}{{ item.count }}{% endfor %}</span>
+                    <span class="count-name">Total Commandes</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-counter danger">
+                    <i class="fa fa-euro-sign"></i>
+                    <span class="count-numbers">{% for item in caCommande %}€{{ item.CaCommande }}{% endfor %}</span>
+                    <span class="count-name">Ca Commandes</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-counter success">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="count-numbers">{% for item in commandetraite %}{{ item.traitee }}{% endfor %}</span>
+                    <span class="count-name">Commande Traitée</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card-counter info">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="count-numbers">{% for item in CountNonTraite %}{{ item.notraitee }}{% endfor %}</span>
+                    <span class="count-name">commande en instance</span>
+                </div>
+            </div>
+            <nav aria-label="..." class="float-right col-lg-12" style="margin-top: 15px" >
+                <ul class="pagination float-right">
+                    {{ knp_pagination_render(GetrecenteCommande)}}
+
+                </ul>
+            </nav>
+
+            <div class="col-lg-12" id="ecommerceRecentOrder" style="margin-top: 0px;">
+                <strong>Recent Order</strong>
+                <div class="card card-shadow table-row">
+
+                    <div class="card-block bg-white table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Produit</th>
+                                <th>Client</th>
+                                <th>Date Commande</th>
+                                <th>Status</th>
+                                <th>No#</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in GetrecenteCommande %}
+                            <tr>
+
+                                <td>
+                                    <img class="img-fluid " src="{{ asset('uploads/Image/' ~ item.image_url) }}" alt="" width="80" height="75">
+                                </td>
+                                <td>{{ item.product_name }}</td>
+                                <td>{{ item.nom }}{{ item.prenom }}</td>
+                                <td>{{ item.date_create }}</td>
+                                <td>
+                                    {% if  item.status =='Annuler'  %}<span class="badge badge-danger font-weight-140">{{ item.status}}</span>{% endif %}
+                                    {% if  item.status =='Traitée'  %}<span class="badge badge-success font-weight-140">{{ item.status}}</span>{% endif %}
+                                    {% if  item.status =='Non Traite' %}<span class="badge badge-warning font-weight-140">{{ item.status}}</span>{% endif %}
+                                </td>
+                                <td>#{{ item.id }}</td>
+
+                            </tr>
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

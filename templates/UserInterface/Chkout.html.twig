@@ -1,0 +1,146 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/Chekout/myjs.js') }}"></script>
+<link href="{{ asset('css/Chekout/mycss.css') }}"rel="stylesheet" >
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container">
+    <div class="row">
+        <section>
+            <div class="wizard">
+                <div class="wizard-inner">
+                    <!-- <div class="connecting-line"></div> -->
+                    <ul class="nav  breadcrumb_checkout" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1">
+                                <h3>Shipping</h3>
+                            </a>
+                        </li>
+                        <li role="presentation" class="disabled">
+                            <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3">
+                                <h3>Confirmations</h3>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" role="tabpanel" id="step1">
+                            <div class="step1">
+                                <!--  exiting customer end -->
+                                <div class="row" style="">
+                                    <div class="checkout_details">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <dl class="dl-horizontal">
+                                                <dt>Nom:<span></span></dt>
+                                                <dd>{{ app.user.Nom }}</dd>
+                                            </dl>
+                                            <dl class="dl-horizontal">
+                                                <dt>Prénom:<span></span></dt>
+                                                <dd>{{ app.user.Prenom }}</dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>Email:<span></span></dt>
+                                                <dd>{{ app.user.Email }}</dd>
+                                            </dl>
+                                            <dl class="dl-horizontal">
+                                                <dt>Address:<span></span></dt>
+                                                <dd>{{ app.user.address }}</dd>
+                                            </dl>
+                                            <dl class="dl-horizontal">
+                                                <dd>{{ app.user.Pays }}</dd>
+                                            </dl>
+
+                                            <div>
+                                                <a class="btn btn-primary next-step btn-theme" data-toggle="modal" data-target="#myModal">Edit</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- exiting customer end-->
+                                <!-- new customer start -->
+                                <div class="row">
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                                <!-- new customer end -->
+                            </div><!-- step 1 end div tag -->
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-primary next-step btn-theme">Next</button></li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-pane" role="tabpanel" id="step3">
+
+                            <div class="col-sm-4">
+                                <h5><strong>Shipping address</strong></h5>
+                                <p>Name: {{ app.user.Nom }}</p>
+                                <p>Address: {{ app.user.address }} </p>
+                                <p>{{ app.user.Pays }} </p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h5><strong>Payment method </strong></h5>
+                                <p>Net Banking: Allahabad Bank </p>
+                            </div>
+                            <div class="col-sm-5">
+
+                                <table class="table">
+                                    <thead>
+
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for item in items %}
+                                    {% set quantity=item.quantiy %}
+                                    {% set qtystk=item.product.stockProduit.Qty %}
+                                    {% if quantity <= qtystk %}
+                                    <tr>
+
+                                        <td><i class="fa fa-usd" aria-hidden="true"></i> {{ item.product.Description}}</td>
+                                        <td>{{ item.product.prix }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+
+                                        <td>
+                                            Total: <i class="fa fa-usd" aria-hidden="true"> <strong style="font-weight: bold">{{ total }}</strong> Euro
+                                            </i></td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="clearfix"></div>
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step btn-theme">Previous</button></li>
+                                <li><a href="{{ path('cart_index') }}" class="btn btn-default next-step btn-theme">Back To Cart</a></li>
+                                <li><a href="{{ path('chekout_add') }}" class="btn btn-primary btn-info-full next-step btn-theme">Done</a></li>
+                            </ul>
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="complete">
+                            <div class="step44">
+                                <h5>Completed</h5>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+            </div>
+        </section>
+    </div>
+</div>

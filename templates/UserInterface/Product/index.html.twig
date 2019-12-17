@@ -1,0 +1,147 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+    {#Debut side BAR#}   {##}
+
+    <div class="shop_sidebar_area">
+
+        <div class="widget catagory mb-50">
+
+            <h6 class="widget-title mb-30">Catagories</h6>
+
+            <div class="catagories-menu">
+                <ul>
+                    <li>
+
+                        {%   for categorie in categories %}
+                            {% if categorie.id == idcategorie %}
+                                <a  href="{{ path('Shop_ShowProduitAll',{'id':categorie.id}) }}" style="font-size: 15px; background-color: #ad744e;color:white">{{ categorie.NameCategorie }}</a>
+
+                            {% else %}
+                                <a  href=   "{{ path('Shop_ShowProduitAll',{'id':categorie.id}) }}" style="font-size: 14px;">{{ categorie.NameCategorie }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    {#fin side bar #}
+
+
+    {#Debut show PRoduit #}
+    <div class="amado_product_area section-padding-100">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+
+                        <div class="total-products">
+
+                            <div class="view d-flex" id="mybtn">
+                                Sort By :
+                               {{ knp_pagination_sortable(items, 'price', 'prix', {'defaultDirection' : 'desc'}) }}
+                                <i class="fa fa-sort" id="myicon" style="color: #dc3545;font-size:28px;"></i>
+                            </div>
+                        </div>
+
+                        <div class="product-sorting d-flex">
+                            <div class="sort-by-date d-flex align-items-center mr-15">
+
+
+                                <div class="row">
+                                    <div class="col-12">
+
+                                        <nav aria-label="navigation">
+                                            <ul class="pagination">
+                                                {{ knp_pagination_render(items) }}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+
+                {% for item in items %}
+                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                        <div class="single-product-wrapper">
+
+
+                            <div class="product-img">
+                                <img src="{{ asset('uploads/Image/' ~ item.ImageUrl) }}"  alt="">
+
+                            </div>
+
+                            <div class="product-description d-flex align-items-center justify-content-between">
+
+                                <div class="product-meta-data">
+                                    <div class="line"></div>
+                                    <p class="product-price">€{{ item.prix }}</p>
+                                    <a href="{{path('UserInterface_Product_Info',{'id':item.id}) }}">
+                                        <h6>{{ item.Description }}</h6>
+                                    </a>
+
+                                </div>
+
+
+                                <div class="ratings-cart text-right">
+                                    <div class="ratings">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cart">
+                    {% if item.stockProduit.Qty >0 %}
+                                        <a href="{{ path('cart_add',{'id':item.id}) }}" data-toggle="tooltip" data-placement="left"
+                                           title="" data-original-title="Add to Cart">
+                                            <img src="{{ asset('TemplateBase/img/core-img/cart.png') }}" alt="">
+                                        </a>
+
+                        {% else %}
+                            <a  data-toggle="tooltip" data-placement="left"
+                               title="" data-original-title="Not Dispo in Stock" style="color: red">
+                                <i class="fa fa-cart-arrow-down" style="font-size: 24px" alt=""></i>
+                            </a>
+                                            {% endif %}
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+
+                    <nav aria-label="navigation">
+                        <ul class="pagination justify-content-end mt-50">
+                            {{ knp_pagination_render(items) }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#fin show Produit#}
+
+
+
+{% endblock %}

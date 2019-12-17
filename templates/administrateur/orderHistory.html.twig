@@ -1,0 +1,372 @@
+{% extends "administrateur/admintemplate.html.twig" %}
+{% block notif %}  {% if CountNonTraite %}
+    <strong style="color: red">
+        {% for item in CountNonTraite %}{{ item.notraitee }}{% endfor %}
+    </strong>
+{% endif %}
+{% endblock %}
+{% block body %}
+    <table>
+        <tbody id="items">
+
+        </tbody>
+    </table>
+    <div class="container">
+        <div class="row">
+
+
+            {#<div class="col-lg-4">#}
+        {#sorty by :#}
+        {#<button class="btns btn success">{{ knp_pagination_sortable(items, 'Prix', 'prix', {'defaultDirection' : 'desc'}) }}</button>#}
+        {#<button class="btns btn info"> {{ knp_pagination_sortable(items, 'Categories', 'Category', {'defaultDirection' : 'desc'}) }}</button>#}
+
+    {#</div>#}
+            <div class="form-inline col-lg-5 ">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input id="myInput" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
+                       aria-label="Search">
+            </div>
+
+            {#{{ knp_pagination_render(items) }}#}
+            <nav aria-label="..." class="float-right col-lg-7" >
+                <ul class="pagination float-right">
+                    {{ knp_pagination_render(items) }}
+
+                </ul>
+            </nav>
+
+    </div>
+    </div>
+    <div class="col-lg-12 mb-12">
+        <div class="card">
+
+            <div class="card-header">
+                <h6 class="text-uppercase mb-0">Historique Commandes</h6>
+            </div>
+
+            <div class="card-body">
+                <table class="table card-text" >
+
+                    <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Client</th>
+                        <th>Date Creation</th>
+                        <th>Montant Total</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable">
+                    {% for item in items %}
+                        <tr>
+                            <th scope="row">{{ item.id }}</th>
+                            <td>{{ item.nom }} {{ item.prenom }}</td>
+                            <td>{{ item.date_create }}</td>
+                            <td>{{ item.commande_total }}</td>
+                            {% if item.status =="Traitée" %}
+                            <td><p class="badge badge-success" style="font-size:14px">{{ item.status }}</p></td>
+                            {% endif %}
+                            {% if item.status =="Non Traite" %}
+                                <td><p class="badge badge-warning" style="font-size:14px"> {{ item.status }}</p></td>
+                            {% endif %}
+
+                            {% if item.status =="Annuler" %}
+                                <td><p class="badge badge-danger" style="font-size:14px"> {{ item.status }}</p></td>
+                            {% endif %}
+
+
+
+                            {% if item.status =="Non Traite" %}
+                            <td>
+                                <i class="fa fa-edit btn  float-left" id="{{item.id}}"
+                                   style="font-size:22px;color:blue; padding: 0px;" data-toggle="modal" data-target="#exampleModal"
+                                   data-varid="{{item.id}}"
+                                   data-idid="{{ item.id }}"
+                                   data-status="{{ item.status }}"
+                                ></i>
+                               </td>
+
+                                {% else %}
+                                    <td>
+                                    <i class="fa fa-eye btn  float-left" id="{{item.id}}"
+                                       style="font-size:22px;color:blue; padding: 0px;" data-toggle="modal" data-target="#voirBL"
+                                       data-varid="{{item.id}}"
+                                       data-idid="{{ item.id }}"
+                                       data-status="{{ item.status }}"
+                                    ></i>
+                                    </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {#model edit #}
+
+    <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal">
+
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Commande</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                    <div class="modal-body">
+                        <input type="hidden" name="idid" id="idid" value="">
+                        <input type="hidden" name="qtys" id="qtys" value="">
+                        Total Commande :<span id="myspantotal" style="font-size: 16px" class="badge badge-warning"></span>
+                        <span id="myspanstock" style="color:white;font-size: 18px" class="badge badge-danger"></span>
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Produit</th>
+                                <th>Prix</th>
+                                <th>Qty</th>
+                                <th>Qty en Stock</th>
+                                <th>Total Line</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbodyajax">
+                            <tr>
+
+                            </tr>
+                            <tr>
+                                <td scope="row"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+
+                        <br>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="" class="btn btn-primary validebtn">Générer B.L</a>
+                        <a href="" class="btn btn-danger AnnulerOrder" style="color:white">Annule Commande</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    {#model  pour voir les detail de B.L #}
+
+    <div class="modal fade bd-example-modal-lg" id="voirBL" tabindex="-1" role="dialog" aria-labelledby="voirBL">
+
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">B.L</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+                    <input type="hidden" name="idid" id="idid" value="">
+                    <input type="hidden" name="qtys" id="qtys" value="">
+                    Total Commande :<span id="myspantotal" style="font-size: 16px" class="badge badge-warning"></span>
+                    <span id="myspanstock" style="color:white;font-size: 18px" class="badge badge-danger"></span>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Produit</th>
+                            <th>Prix</th>
+                            <th>Qty</th>
+                            <th>Qty en Stock</th>
+                            <th>Total Line</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbodyajaxvoir">
+                        <tr>
+
+                        </tr>
+                        <tr>
+                            <td scope="row"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                    <br>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var varabeId=button.data('varid')
+            var varQty=button.data('qty')
+
+            var modal = $(this)
+            modal.find('.modal-body #IDEdit').val(varabeId)
+            modal.find('.modal-body #idid').val(varabeId)
+            modal.find('.modal-body #qtid').val(varQty)
+            modal.find('.modal-body #qtys').val(varQty)
+
+
+
+        })
+
+       </script>
+
+    {#search#}
+    <script>
+        $(document).ready(function(){
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $('.fa-edit').click(function () {
+            var tr_id = $(this).attr('id')
+            $.ajax({
+                url: '/admin/commandes/ajax/'+tr_id,
+                data: {
+                    'id': tr_id
+                },
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8', //define a contentType of your request
+                cache: false,
+            success: function (response) {
+                var data=JSON.parse(response);
+                var event_data = '';
+                var total=0;
+                var isempty=0;
+                $("#tbodyajax").empty(event_data);
+                $(".validebtn").attr('class','btn btn-primary validebtn');
+                $("#myspanstock").html('');
+                if (data != null) {
+                    jQuery.each(data, function(index, value){
+                        //use an id in your ul in order to append some items
+                        event_data += '<tr>';
+                        event_data += '<td>'+value.id+'</td>';
+                        event_data += '<td>'+value.product_name+'</td>';
+                        event_data += '<td>'+value.product_price+'</td>';
+                        event_data += '<td>'+value.qty+'</td>';
+                        event_data += '<td>'+value.QtyDispo+'</td>';
+                        event_data += '<td>'+value.total_line+'</td>';
+
+                        event_data += '</tr>';
+                        total =parseInt(total)+parseInt(value.total_line);
+                        $(".validebtn").attr('href',"/admin/orderHistoriy/BLGenere/"+value.ComnnandeHeadId);
+                        $(".AnnulerOrder").attr('href',"/admin/orderHistoriy/CanceledOrder/"+value.ComnnandeHeadId);
+
+
+
+                        if(parseInt(value.QtyDispo)<parseInt(value.qty)){
+                            isempty=1;
+
+                            $(".validebtn").attr('class','btn btn-primary validebtn disabled');
+                            $("#myspanstock").html("Stock insuffisant");
+                        }
+
+
+                    });
+
+
+                    $("#tbodyajax").append(event_data);
+                    $("#myspantotal").html('€'+total);
+
+                    console.log(isempty);
+
+
+                }
+                // data is your result from controller
+
+            },
+
+        });
+        });
+
+
+
+
+        $('.fa-eye').click(function () {
+            var tr_id = $(this).attr('id')
+            $.ajax({
+                url: '/admin/commandes/ajax/'+tr_id,
+                data: {
+                    'id': tr_id
+                },
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8', //define a contentType of your request
+                cache: false,
+                success: function (response) {
+                    var data=JSON.parse(response);
+                    var event_data = '';
+                    $("#tbodyajaxvoir").empty(event_data);
+                    if (data != null) {
+                        jQuery.each(data, function(index, value){
+                            //use an id in your ul in order to append some items
+                            event_data += '<tr>';
+                            event_data += '<td>'+value.id+'</td>';
+                            event_data += '<td>'+value.product_name+'</td>';
+                            event_data += '<td>'+value.product_price+'</td>';
+                            event_data += '<td>'+value.qty+'</td>';
+                            event_data += '<td>'+value.QtyDispo+'</td>';
+                            event_data += '<td>'+value.total_line+'</td>';
+
+                            event_data += '</tr>';
+
+
+
+                        });
+
+
+                        $("#tbodyajaxvoir").append(event_data);
+
+                    }
+                    // data is your result from controller
+
+                },
+
+            });
+        });
+    </script>
+
+{% endblock %}

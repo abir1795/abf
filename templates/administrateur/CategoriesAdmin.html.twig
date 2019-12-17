@@ -1,0 +1,209 @@
+{% extends "administrateur/admintemplate.html.twig" %}
+{% block notif %}  {% if CountNonTraite %}
+    <strong style="color: red">
+        {% for item in CountNonTraite %}{{ item.notraitee }}{% endfor %}
+    </strong>
+{% endif %}
+{% endblock %}
+{% block body %}
+
+    {% if dataerrors %}
+        <div class="alert alert-danger">
+            <strong>{{ dataerrors }}</strong>
+        </div>
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <i class="fa fa-plus-square btn col-lg-1" title="Ajouter une Categories" style="font-size:24px;color:green;" data-toggle="modal" data-target="#CategoryFadeShow"></i>
+            <div class="form-inline col-lg-4 ">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input id="myInput" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
+                       aria-label="Search">
+            </div>
+            <nav aria-label="..." class="float-right col-lg-7" >
+                <ul class="pagination float-right">
+                    {{ knp_pagination_render(items) }}
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+<div class="col-lg-12 mb-12">
+    <div class="card">
+        <div class="card-header">
+            <h6 class="text-uppercase mb-0">Catégories</h6>
+        </div>
+        <div class="card-body">
+            <table class="table card-text">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom de Catégories</th>
+                    <th>Etat</th>
+                    <th>Date de Création</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                <tr>
+
+                    <th scope="row">{{ item.id }}</th>
+
+                    <td>{{ item.NameCategorie }}</td>
+                    <td>
+                         {%  if item.HOLD !=1 %}
+                        Ouvert
+                             {% else %}
+                             fermé
+                        {%  endif %}
+
+                    </td>
+                    <td>{{ item.DateCreation|date("F jS \\a\\t g:ia")  }}</td>
+                    <td>
+                        <img class="img-fluid " src="{{ asset('uploads/Image/' ~ item.ImageUrl) }}" alt="" width="120" height="120">
+
+                    </td>
+                    <td>
+                        <i class="btn fas fa-edit" style="color:blue;font-size:16px"     data-toggle="modal"  data-varid="{{item.id}}"
+                           data-nmecategories="{{ item.NameCategorie }}" data-idid="{{item.id}}" data-idhold="{{item.HOLD}}" data-target="#exampleModal"  ></i>
+                        <a class="btn fas fa-images" style="color:red;font-size:16px" href=""> </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="CategoryFadeShow" tabindex="-1" role="dialog" aria-labelledby="CategoryFadeShow" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  {{ form_start(form)}}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Décription:</label>
+                        {{ form_row(form.Name_Categorie) }}
+                        {{ form_row(form.ImageUrl) }}
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    {{ form_row(form.Save) }}
+
+                    {{ form_errors(form) }}
+
+                </div>
+
+
+ {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    {% if not form.vars.valid %}
+        <div class="alert alert-error">
+
+        </div>
+        {% endif %}
+
+
+
+
+
+
+
+
+
+    {#{{-- Edit MODEL--}}#}
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">Modifier Catégorie</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="{{ path('admin_categories_updated') }}"  method="post" role="form" enctype="multipart/form-data">
+
+                    <div class="modal-body">
+                        <input type="hidden" name="idid" id="idid" value="">
+
+
+                        <div class="form-group col-md-3">
+                            <label for="recipient-name" class="control-label">Id: </label>
+                            <input type="text" class="form-control" id="IDEdit" name="idedit" aria-disabled="" disabled>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="recipient-name" class="control-label">Categorie</label>
+                            <input type="text" class="form-control" id="editcategorie" aria-disabled=""  name="editcategorie" >
+                        </div>
+
+
+                        <label  cfor="recipient-name" class="control-label col-md-3">Bloqué</label>
+                        <div  class="form-check col-md-3">
+
+                            <input type="checkbox" class="form-check-input col-md-3" id="HOLD" name="HOLD[]">
+                        </div>
+                        <br>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var varablecategories = button.data('nmecategories')
+            var varabeId = button.data('varid')
+            var categories = button.data('varid')
+            var HOLD = button.data('idhold')
+            var modal = $(this)
+            modal.find('.modal-body #editcategorie').val(varablecategories)
+            modal.find('.modal-body #IDEdit').val(varabeId)
+            modal.find('.modal-body #idid').val(varabeId)
+            if (HOLD==1){
+
+                modal.find('.modal-body #HOLD').prop("checked", true)
+            }
+            else {
+                modal.find('.modal-body #HOLD').prop("checked", false)
+            }
+        })
+        $('#input_category_ImageUrl').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+
+
+
+{% endblock %}
