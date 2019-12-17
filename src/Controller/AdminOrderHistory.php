@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: MEHDI
+ * User: abir
  * Date: 11/12/2019
  * Time: 18:33
  */
@@ -188,7 +188,7 @@ class AdminOrderHistory extends  AbstractController
             ->setBody(
                 $this->renderView(
                 // templates/emails/registration.html.twig
-                    'emails/ConfirmationBL.html.twig',
+                    'emails/refus.html.twig',
                     ['id'=>$id
                     ]
                 ),
